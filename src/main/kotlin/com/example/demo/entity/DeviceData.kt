@@ -4,7 +4,9 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import org.springframework.cglib.core.Local
 import java.time.LocalDateTime
+import java.util.Date
 
 /**
  * Entité JPA représentant les données reçues d'un dispositif GPS.
@@ -30,7 +32,11 @@ data class DeviceData(
     val type: String,
     val content: String,
     val timestamp: LocalDateTime = LocalDateTime.now(),
-    val latitude: String? = null,
-    val longitude: String? = null,
-    val batteryStatus: Int? = null
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val batteryStatus: Int? = null,
+    val signalStrength: Int? = null,
+    val receivedAt: LocalDateTime? = null,
+    val imageData: String? = null
 )
+

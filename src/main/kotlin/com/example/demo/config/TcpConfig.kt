@@ -10,6 +10,7 @@ import org.springframework.integration.ip.tcp.TcpSendingMessageHandler
 import org.springframework.integration.ip.tcp.connection.TcpNetServerConnectionFactory
 import org.springframework.integration.ip.tcp.serializer.ByteArrayCrLfSerializer
 import org.springframework.messaging.MessageChannel
+import org.slf4j.LoggerFactory
 
 /**
  * Configuration du serveur TCP pour l'intégration Spring.
@@ -34,6 +35,19 @@ class TcpConfig {
 
     @Value("\${tcp.server.host:localhost}")
     private var tcpHost: String = "localhost"
+
+    private val logger = LoggerFactory.getLogger(TcpConfig::class.java)
+
+    init {
+        if (tcpPort !in 1..65535) {
+            logger.error("Invalid TCP port: $tcpPort. Must be between 1 and 65535. Defaulting to 9001.")
+            this.tcpPort = 9001
+        }
+        if (tcpHost.isBlank()) {
+            logger.warn("TCP host is blank. Defaulting to localhost.")
+            this.tcpHost = "localhost"
+        }
+    }
 
     /**
      * Crée le canal d'entrée pour les messages TCP.
@@ -62,6 +76,7 @@ class TcpConfig {
         val adapter = TcpReceivingChannelAdapter()
         adapter.setConnectionFactory(factory)
         adapter.setOutputChannel(tcpInChannel())
+        logger.info("TCP server adapter initialized on $tcpHost:$tcpPort")
         return adapter
     }
 
@@ -117,6 +132,7 @@ class TcpConfig {
         val factory = tcpServerConnectionFactory()
         val handler = TcpSendingMessageHandler()
         handler.setConnectionFactory(factory)
+        logger.info("TCP outbound handler initialized for $tcpHost:$tcpPort")
         return handler
     }
 }
