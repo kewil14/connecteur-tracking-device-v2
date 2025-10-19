@@ -1,0 +1,42 @@
+# application-dev.yml
+server:
+  port: ${PORT:8080}
+
+tcp:
+  server:
+    host: ${REMOTE_IP:localhost}
+    port: ${REMOTE_PORT:9001}
+
+connection:
+  retry:
+    interval: ${RETRY_INTERVAL:300000}
+
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  main:
+    allow-bean-definition-overriding: true
+
+  datasource:
+    url: jdbc:h2:mem:gpsdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+  integration:
+    tcp:
+      server:
+        port: ${tcp.server.port}
+spring.application.name: gps-server
